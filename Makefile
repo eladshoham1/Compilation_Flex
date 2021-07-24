@@ -1,5 +1,5 @@
 build:
-	flex -d olympics.lex
+	flex olympics.lex
 	gcc -o olympics lex.yy.c
 
 clean:

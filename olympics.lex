@@ -27,26 +27,25 @@ union {
 
 [a-zA-Z]+[a-zA-Z ]*		{ strcpy(yylval.title, yytext); return TITLE; }
 
-"<sport>"			{ return SPORT; }
+\<sport\>			{ return SPORT; }
 
-"<years>"			{ return YEARS; }
+\<years\>			{ return YEARS; }
 
-"["[a-zA-Z]+[a-zA-Z ]*"]"	{ return NAME; }
+"["[a-zA-Z]+[a-zA-Z ]*"]"	{ strcpy(yylval.name, yytext); /*return NAME;*/ }
 
-[0-9]+				{ yylval.year = atoi(yytext); return YEAR_NUM; }
+[0-9]+				{ yylval.year = atoi(yytext); /*return YEAR_NUM;*/ }
 
 ,				{ return COMMA; }
 
 ["through"-]			{ return THROUGH; }
 
-since				{ return SINCE; }
+"since"				{ return SINCE; }
 
-all				{ return ALL; }	
+"all"				{ return ALL; }
 
 [\t\n ]+			{ /* skip white space */ }
                 
-. 				{ fprintf (stderr, "line %d: unrecognized token %c (%x)\n",
-                      			yylineno, yytext[0], yytext[0]); }
+. 				{ fprintf (stderr, "Line: %d unrecognized token %c (%x)\n", 						yylineno, yytext[0], yytext[0]); }			
 
 %%
 
@@ -66,34 +65,36 @@ int main (int argc, char **argv)
 		exit(1);
 	}
 
+	printf("%s\t\t\t%s\t\t\t%s\n", "TOKEN", "LEXEME", "SEMANTIC VALUE");
+	printf("---------------------------------------------------------------\n");
 	while ((token = yylex()) != 0) {
 		switch (token) {
 			case TITLE: 	
-				printf("TITLE: %s\n", yylval.title);
-			      	break;
+				printf("TITLE\t\t\t%s\t\t\t%s\n", yytext, yylval.title); 
+				break;
 			case SPORT:
-				printf ("SPORT: %s\n", yylval.name);
+				printf("SPORT\t\t\t%s\t\t\t%s\n", yytext, yylval.name);
 			      	break;
 			case YEARS:
-				printf ("YEARS\n");
+				printf("YEARS\t\t\t%s\n", yytext);
 			      	break;
 			case NAME: 	
-				printf("NAME\n");
+				printf("NAME\t\t\t%s\n", yytext);
 			      	break;
 			case YEAR_NUM:
-				printf ("YEAR_NUM: %d\n", yylval.year);
+				printf("YEAR_NUM\t\t\t%s\t\t\t%d\n", yytext, yylval.year);
 			      	break;
 			case COMMA:
-				printf ("COMMA\n");
+				printf("COMMA\t\t\t%s\n", yytext);
 			      	break;
 			case THROUGH: 	
-				printf("THROUGH\n");
+				printf("THROUGH\t\t\t%s\n", yytext);
 			      	break;
 			case SINCE:
-				printf ("SINCE\n");
+				printf("SINCE\t\t\t%s\n", yytext);
 			      	break;
 			case ALL:
-				printf ("ALL\n");
+				printf("ALL\t\t\t%s\n", yytext);
 			      	break;
 			default:
 				fprintf (stderr, "error ... \n");
