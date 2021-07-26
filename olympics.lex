@@ -14,27 +14,27 @@ union {
 
 %%
 
-"all"				{ return ALL; }
+"Olympic Games"				{ return TITLE; }
 
-"since"				{ return SINCE; }
+"<sport>"				{ return SPORT; }
 
-"<sport>"			{ return SPORT; }
+"<years>"				{ return YEARS; }
 
-"<years>"			{ return YEARS; }
+189[6-9]|19[0-9]{2}|[2-9][0-9]{3,}	{ yylval.year = atoi(yytext); yylval.year = yylval.year == 2020 ? 2021 : yylval.year; return YEAR_NUM; }
 
-,				{ return COMMA; }
+,					{ return COMMA; }
 
-"through"|-			{ return THROUGH; }
+"through"|-				{ return THROUGH; }
 
-"["[a-zA-Z]+[a-zA-Z ]*"]"	{ strcpy(yylval.name, yytext); return NAME; }
+"since"					{ return SINCE; }
 
-[a-zA-Z]+[a-zA-Z ]*		{ return TITLE; }
+"all"					{ return ALL; }
 
-189[6-9]|19[0-9]{2}|[2-9][0-9]{3,}	{ yylval.year = atoi(yytext); return YEAR_NUM; }
+"["[A-Za-z]+(" "[A-Za-z]+)*"]"		{ strcpy(yylval.name, yytext+1); yylval.name[strlen(yylval.name)-1] = '\0'; return NAME; }
 
-[\t\n ]+			{ /* skip white space */ }
+[ \t\n]+				{ /* skip white space */ }
                 
-. 				{ fprintf (stderr, "Line: %d unrecognized token %c (0x%x)\n", 						yylineno, yytext[0], yytext[0]); }			
+. 					{ fprintf(stderr, "Line: %d unrecognized token %c (0x%x)\n", yylineno, yytext[0], yytext[0]); }			
 
 %%
 
