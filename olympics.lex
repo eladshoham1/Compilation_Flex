@@ -1,21 +1,10 @@
 %{
 #include <string.h>
 
-#define TITLE 500
-#define SPORT 501
-#define YEARS 502
-#define NAME 503
-#define YEAR_NUM 504
-#define COMMA 505
-#define THROUGH 506
-#define SINCE 507
-#define ALL 508
-
-#define MAX_STR_LEN 100
+enum { TITLE = 500, SPORT, YEARS, NAME, YEAR_NUM, COMMA, THROUGH, SINCE, ALL }; 
 
 union {
-	char title[MAX_STR_LEN];
-	char name[MAX_STR_LEN];
+	char name[100];
 	int year;
 } yylval;
 %}
@@ -25,27 +14,27 @@ union {
 
 %%
 
-[a-zA-Z]+[a-zA-Z ]*		{ strcpy(yylval.title, yytext); return TITLE; }
-
-\<sport\>			{ return SPORT; }
-
-\<years\>			{ return YEARS; }
-
-"["[a-zA-Z]+[a-zA-Z ]*"]"	{ strcpy(yylval.name, yytext); /*return NAME;*/ }
-
-[0-9]+				{ yylval.year = atoi(yytext); /*return YEAR_NUM;*/ }
-
-,				{ return COMMA; }
-
-["through"-]			{ return THROUGH; }
+"all"				{ return ALL; }
 
 "since"				{ return SINCE; }
 
-"all"				{ return ALL; }
+"<sport>"			{ return SPORT; }
+
+"<years>"			{ return YEARS; }
+
+,				{ return COMMA; }
+
+"through"|-			{ return THROUGH; }
+
+"["[a-zA-Z]+[a-zA-Z ]*"]"	{ strcpy(yylval.name, yytext); return NAME; }
+
+[a-zA-Z]+[a-zA-Z ]*		{ return TITLE; }
+
+189[6-9]|19[0-9]{2}|[2-9][0-9]{3,}	{ yylval.year = atoi(yytext); return YEAR_NUM; }
 
 [\t\n ]+			{ /* skip white space */ }
                 
-. 				{ fprintf (stderr, "Line: %d unrecognized token %c (%x)\n", 						yylineno, yytext[0], yytext[0]); }			
+. 				{ fprintf (stderr, "Line: %d unrecognized token %c (0x%x)\n", 						yylineno, yytext[0], yytext[0]); }			
 
 %%
 
@@ -65,36 +54,36 @@ int main (int argc, char **argv)
 		exit(1);
 	}
 
-	printf("%s\t\t\t%s\t\t\t%s\n", "TOKEN", "LEXEME", "SEMANTIC VALUE");
-	printf("---------------------------------------------------------------\n");
+	printf("%s\t\t%s\t\t%s\n", "TOKEN", "LEXEME", "SEMANTIC VALUE");
+	printf("----------------------------------------------\n");
 	while ((token = yylex()) != 0) {
 		switch (token) {
 			case TITLE: 	
-				printf("TITLE\t\t\t%s\t\t\t%s\n", yytext, yylval.title); 
+				printf("TITLE\t\t%s\n", yytext);
 				break;
 			case SPORT:
-				printf("SPORT\t\t\t%s\t\t\t%s\n", yytext, yylval.name);
+				printf("SPORT\t\t%s\n", yytext);
 			      	break;
 			case YEARS:
-				printf("YEARS\t\t\t%s\n", yytext);
+				printf("YEARS\t\t%s\n", yytext);
 			      	break;
 			case NAME: 	
-				printf("NAME\t\t\t%s\n", yytext);
+				printf("NAME\t\t%s\t%s\n", yytext, yylval.name);
 			      	break;
 			case YEAR_NUM:
-				printf("YEAR_NUM\t\t\t%s\t\t\t%d\n", yytext, yylval.year);
+				printf("YEAR_NUM\t%s\t\t%d\n", yytext, yylval.year);
 			      	break;
 			case COMMA:
-				printf("COMMA\t\t\t%s\n", yytext);
+				printf("COMMA\t\t%s\n", yytext);
 			      	break;
 			case THROUGH: 	
-				printf("THROUGH\t\t\t%s\n", yytext);
+				printf("THROUGH\t\t%s\n", yytext);
 			      	break;
 			case SINCE:
-				printf("SINCE\t\t\t%s\n", yytext);
+				printf("SINCE\t\t%s\n", yytext);
 			      	break;
 			case ALL:
-				printf("ALL\t\t\t%s\n", yytext);
+				printf("ALL\t\t%s\n", yytext);
 			      	break;
 			default:
 				fprintf (stderr, "error ... \n");
