@@ -1,10 +1,13 @@
 %{
 #include <string.h>
 
-enum { TITLE = 500, SPORT, YEARS, NAME, YEAR_NUM, COMMA, THROUGH, SINCE, ALL }; 
+#define MAX_SIZE 100
+
+enum { TITLE = 500, SPORT, YEARS, NAME, YEAR_NUM, COMMA, THROUGH, SINCE, ALL };
 
 union {
-	char name[100];
+	char title[MAX_SIZE];
+	char name[MAX_SIZE];
 	int year;
 } yylval;
 %}
@@ -13,8 +16,6 @@ union {
 %option yylineno
 
 %%
-
-"Olympic Games"				{ return TITLE; }
 
 "<sport>"				{ return SPORT; }
 
@@ -31,6 +32,8 @@ union {
 "all"					{ return ALL; }
 
 "["[A-Za-z]+(" "[A-Za-z]+)*"]"		{ strcpy(yylval.name, yytext+1); yylval.name[strlen(yylval.name)-1] = '\0'; return NAME; }
+
+[A-Za-z]+(" "[A-Za-z]+)*		{ strcpy(yylval.title, yytext); return TITLE; }
 
 [ \t\n]+				{ /* skip white space */ }
                 
@@ -59,7 +62,7 @@ int main (int argc, char **argv)
 	while ((token = yylex()) != 0) {
 		switch (token) {
 			case TITLE: 	
-				printf("TITLE\t\t%s\n", yytext);
+				printf("TITLE\t\t%s\t%s\n", yytext, yylval.title);
 				break;
 			case SPORT:
 				printf("SPORT\t\t%s\n", yytext);
