@@ -35,7 +35,7 @@ union {
 
 [A-Za-z]+(" "[A-Za-z]+)*		{ strcpy(yylval.title, yytext); return TITLE; }
 
-[ \t\n]+				{ /* skip white space */ }
+[ \t\n\r]+				{ /* skip white space */ }
                 
 . 					{ fprintf(stderr, "Line: %d unrecognized token %c (0x%x)\n", yylineno, yytext[0], yytext[0]); }			
 
